@@ -61,6 +61,12 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
             {
                 Title = "The torrent release folder",
                 DownloadId = "35238",
+                DownloadClientInfo = new DownloadClientItemClientInfo
+                {
+                    Protocol = client.Protocol,
+                    Id = client.Id,
+                    Name = client.Name
+                }
             };
 
             var trackedDownload = Subject.TrackDownload(client, item);
@@ -117,6 +123,12 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
             {
                 Title = "The torrent release folder",
                 DownloadId = "35238",
+                DownloadClientInfo = new DownloadClientItemClientInfo
+                {
+                    Protocol = client.Protocol,
+                    Id = client.Id,
+                    Name = client.Name
+                }
             };
 
             var trackedDownload = Subject.TrackDownload(client, item);
