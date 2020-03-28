@@ -21,8 +21,8 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
         {
             Mocker.GetMock<IHistoryService>()
                 .Setup(s => s.FindByDownloadId(It.Is<string>(sr => sr == "35238")))
-                .Returns(new List<History.History>(){
-                 new History.History(){
+                .Returns(new List<History.EpisodeHistory>(){
+                 new History.EpisodeHistory(){
                      DownloadId = "35238",
                      SourceTitle = "TV Series S01",
                      SeriesId = 5,
@@ -90,8 +90,8 @@ namespace NzbDrone.Core.Test.Download.TrackedDownloads
 
             Mocker.GetMock<IHistoryService>()
                 .Setup(s => s.FindByDownloadId(It.Is<string>(sr => sr == "35238")))
-                .Returns(new List<History.History>(){
-                 new History.History(){
+                .Returns(new List<History.EpisodeHistory>(){
+                 new History.EpisodeHistory(){
                      DownloadId = "35238",
                      SourceTitle = "TV Series Special",
                      SeriesId = 5,

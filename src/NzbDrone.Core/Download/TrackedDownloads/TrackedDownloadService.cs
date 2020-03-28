@@ -117,7 +117,7 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                 if (historyItems.Any())
                 {
                     var firstHistoryItem = historyItems.First();
-                    var grabbedEvent = historyItems.FirstOrDefault(v => v.EventType == HistoryEventType.Grabbed);
+                    var grabbedEvent = historyItems.FirstOrDefault(v => v.EventType == EpisodeHistoryEventType.Grabbed);
 
                     trackedDownload.Indexer = grabbedEvent?.Data["indexer"];
 
@@ -132,7 +132,7 @@ namespace NzbDrone.Core.Download.TrackedDownloads
 
                         if (parsedEpisodeInfo != null)
                         {
-                            trackedDownload.RemoteEpisode = _parsingService.Map(parsedEpisodeInfo, firstHistoryItem.SeriesId, historyItems.Where(v => v.EventType == HistoryEventType.Grabbed).Select(h => h.EpisodeId).Distinct());
+                            trackedDownload.RemoteEpisode = _parsingService.Map(parsedEpisodeInfo, firstHistoryItem.SeriesId, historyItems.Where(v => v.EventType == EpisodeHistoryEventType.Grabbed).Select(h => h.EpisodeId).Distinct());
                         }
                     }
                 }
@@ -178,7 +178,7 @@ namespace NzbDrone.Core.Download.TrackedDownloads
                 existingItem.CanMoveFiles != downloadItem.CanMoveFiles)
             {
                 _logger.Debug("Tracking '{0}:{1}': ClientState={2}{3} SonarrStage={4} Episode='{5}' OutputPath={6}.",
-                    downloadItem.DownloadClient, downloadItem.Title,
+                    downloadItem.DownloadClientInfo.Name, downloadItem.Title,
                     downloadItem.Status, downloadItem.CanBeRemoved ? "" :
                                          downloadItem.CanMoveFiles ? " (busy)" : " (readonly)",
                     trackedDownload.State,

@@ -81,7 +81,7 @@ namespace NzbDrone.Core.Datastore
 
             Mapper.Entity<SceneMapping>().RegisterModel("SceneMappings");
 
-            Mapper.Entity<History.History>().RegisterModel("History")
+            Mapper.Entity<History.EpisodeHistory>().RegisterModel("History")
                   .AutoMapChildModels();
 
             Mapper.Entity<Series>().RegisterModel("Series")

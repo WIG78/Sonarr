@@ -9,7 +9,7 @@ using NzbDrone.Core.Tv;
 namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
 {
     [TestFixture]
-    public class CleanupOrphanedHistoryItemsFixture : DbTest<CleanupOrphanedHistoryItems, History.History>
+    public class CleanupOrphanedHistoryItemsFixture : DbTest<CleanupOrphanedHistoryItems, History.EpisodeHistory>
     {
         private Series _series;
         private Episode _episode;
@@ -39,7 +39,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
         {
             GivenEpisode();
 
-            var history = Builder<History.History>.CreateNew()
+            var history = Builder<History.EpisodeHistory>.CreateNew()
                                                   .With(h => h.Quality = new QualityModel())
                                                   .With(h => h.EpisodeId = _episode.Id)
                                                   .BuildNew();
@@ -54,7 +54,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
         {
             GivenSeries();
 
-            var history = Builder<History.History>.CreateNew()
+            var history = Builder<History.EpisodeHistory>.CreateNew()
                                                   .With(h => h.Quality = new QualityModel())
                                                   .With(h => h.SeriesId = _series.Id)
                                                   .BuildNew();
@@ -70,7 +70,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
             GivenSeries();
             GivenEpisode();
 
-            var history = Builder<History.History>.CreateListOfSize(2)
+            var history = Builder<History.EpisodeHistory>.CreateListOfSize(2)
                                                   .All()
                                                   .With(h => h.Quality = new QualityModel())
                                                   .With(h => h.EpisodeId = _episode.Id)
@@ -91,7 +91,7 @@ namespace NzbDrone.Core.Test.Housekeeping.Housekeepers
             GivenSeries();
             GivenEpisode();
 
-            var history = Builder<History.History>.CreateListOfSize(2)
+            var history = Builder<History.EpisodeHistory>.CreateListOfSize(2)
                                                   .All()
                                                   .With(h => h.Quality = new QualityModel())
                                                   .With(h => h.SeriesId = _series.Id)

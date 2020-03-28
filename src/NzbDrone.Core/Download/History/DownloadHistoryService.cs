@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.History;
 using NzbDrone.Core.MediaFiles.Events;
@@ -81,14 +82,24 @@ namespace NzbDrone.Core.Download.History
 
         public void Handle(EpisodeGrabbedEvent message)
         {
-            _repository.Insert(new DownloadHistory
+            var history = new DownloadHistory
             {
                 EventType = DownloadHistoryEventType.DownloadGrabbed,
                 SeriesId = message.Episode.Series.Id,
                 DownloadId = message.DownloadId,
                 SourceTitle = message.Episode.Release.Title,
-                Date = DateTime.UtcNow
-            });
+                Date = DateTime.UtcNow,
+                Protocol = message.Episode.Release.DownloadProtocol,
+                IndexerId = message.Episode.Release.IndexerId,
+                DownloadClientId = message.DownloadClientId,
+                Release =  message.Episode.Release
+            };
+
+            history.Data.Add("Indexer", message.Episode.Release.Indexer);
+            history.Data.Add("DownloadClient", message.DownloadClient);
+            history.Data.Add("PreferredWordScore", message.Episode.PreferredWordScore.ToString());
+
+            _repository.Insert(history);
         }
 
         public void Handle(EpisodeImportedEvent message)
@@ -100,6 +111,9 @@ namespace NzbDrone.Core.Download.History
 
             var downloadId = message.DownloadId;
 
+            // Try to find the downloadId if the user used manual import (from wanted: missing) or the
+            // API to import and downloadId wasn't provided.
+
             if (downloadId.IsNullOrWhiteSpace())
             {
                 downloadId = _historyService.FindDownloadId(message);
@@ -110,50 +124,80 @@ namespace NzbDrone.Core.Download.History
                 return;
             }
 
-            _repository.Insert(new DownloadHistory
+            var history = new DownloadHistory
             {
                 EventType = DownloadHistoryEventType.FileImported,
                 SeriesId = message.EpisodeInfo.Series.Id,
                 DownloadId = downloadId,
                 SourceTitle = message.EpisodeInfo.Path,
-                Date = DateTime.UtcNow
-            });
+                Date = DateTime.UtcNow,
+                Protocol = message.DownloadClientInfo.Protocol,
+                DownloadClientId = message.DownloadClientInfo.Id
+            };
+
+            history.Data.Add("DownloadClient", message.DownloadClientInfo.Name);
+
+            _repository.Insert(history);
         }
 
         public void Handle(DownloadCompletedEvent message)
         {
-            _repository.Insert(new DownloadHistory
+            var history = new DownloadHistory
             {
                 EventType = DownloadHistoryEventType.DownloadImported,
                 SeriesId = message.TrackedDownload.RemoteEpisode.Series.Id,
                 DownloadId = message.TrackedDownload.DownloadItem.DownloadId,
                 SourceTitle = message.TrackedDownload.DownloadItem.OutputPath.ToString(),
-                Date = DateTime.UtcNow
-            });
+                Date = DateTime.UtcNow,
+                Protocol = message.TrackedDownload.Protocol,
+                DownloadClientId = message.TrackedDownload.DownloadClient
+            };
+
+            history.Data.Add("DownloadClient", message.TrackedDownload.DownloadItem.DownloadClientInfo.Name);
+
+            _repository.Insert(history);
         }
 
         public void Handle(DownloadFailedEvent message)
         {
-            _repository.Insert(new DownloadHistory
+            // Don't track failed download for an unknown download
+            if (message.TrackedDownload == null)
             {
-                EventType = DownloadHistoryEventType.DownloadFailed,
-                SeriesId = message.TrackedDownload.RemoteEpisode.Series.Id,
-                DownloadId = message.TrackedDownload.DownloadItem.DownloadId,
-                SourceTitle = message.SourceTitle,
-                Date = DateTime.UtcNow
-            });
-        }
+                return;
+            }
 
-        public void Handle(DownloadIgnoredEvent message)
-        {
-            _repository.Insert(new DownloadHistory
+            var history = new DownloadHistory
             {
                 EventType = DownloadHistoryEventType.DownloadIgnored,
                 SeriesId = message.SeriesId,
                 DownloadId = message.DownloadId,
                 SourceTitle = message.SourceTitle,
-                Date = DateTime.UtcNow
-            });
+                Date = DateTime.UtcNow,
+                Protocol = message.TrackedDownload.Protocol,
+                DownloadClientId = message.TrackedDownload.DownloadClient
+            };
+
+            history.Data.Add("DownloadClient", message.TrackedDownload.DownloadItem.DownloadClientInfo.Name);
+
+            _repository.Insert(history);
+        }
+
+        public void Handle(DownloadIgnoredEvent message)
+        {
+            var history = new DownloadHistory
+            {
+                EventType = DownloadHistoryEventType.DownloadIgnored,
+                SeriesId = message.SeriesId,
+                DownloadId = message.DownloadId,
+                SourceTitle = message.SourceTitle,
+                Date = DateTime.UtcNow,
+                Protocol = message.DownloadClientInfo.Protocol,
+                DownloadClientId = message.DownloadClientInfo.Id
+            };
+
+            history.Data.Add("DownloadClient", message.DownloadClientInfo.Name);
+
+            _repository.Insert(history);
         }
 
         public void Handle(SeriesDeletedEvent message)
