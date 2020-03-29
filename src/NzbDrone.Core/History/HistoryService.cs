@@ -159,6 +159,7 @@ namespace NzbDrone.Core.History
                 history.Data.Add("AgeMinutes", message.Episode.Release.AgeMinutes.ToString());
                 history.Data.Add("PublishedDate", message.Episode.Release.PublishDate.ToString("s") + "Z");
                 history.Data.Add("DownloadClient", message.DownloadClient);
+                history.Data.Add("DownloadClientName", message.DownloadClientName);
                 history.Data.Add("Size", message.Episode.Release.Size.ToString());
                 history.Data.Add("DownloadUrl", message.Episode.Release.DownloadUrl);
                 history.Data.Add("Guid", message.Episode.Release.Guid);
@@ -214,7 +215,8 @@ namespace NzbDrone.Core.History
                 //history.Data.Add("FileId", message.ImportedEpisode.Id.ToString());
                 history.Data.Add("DroppedPath", message.EpisodeInfo.Path);
                 history.Data.Add("ImportedPath", Path.Combine(message.EpisodeInfo.Series.Path, message.ImportedEpisode.RelativePath));
-                history.Data.Add("DownloadClient", message.DownloadClientInfo?.Name);
+                history.Data.Add("DownloadClient", message.DownloadClientInfo?.Type);
+                history.Data.Add("DownloadClientName", message.DownloadClientInfo?.Name);
 
                 _historyRepository.Insert(history);
             }
@@ -237,6 +239,7 @@ namespace NzbDrone.Core.History
                 };
 
                 history.Data.Add("DownloadClient", message.DownloadClient);
+                history.Data.Add("DownloadClientName", message.TrackedDownload?.DownloadItem.DownloadClientInfo.Name);
                 history.Data.Add("Message", message.Message);
 
                 _historyRepository.Insert(history);
@@ -320,7 +323,8 @@ namespace NzbDrone.Core.History
                                   Language = message.Language
                               };
 
-                history.Data.Add("DownloadClient", message.DownloadClientInfo.Name);
+                history.Data.Add("DownloadClient", message.DownloadClientInfo.Type);
+                history.Data.Add("DownloadClientName", message.DownloadClientInfo.Name);
                 history.Data.Add("Message", message.Message);
 
                 historyToAdd.Add(history);

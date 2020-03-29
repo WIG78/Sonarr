@@ -18,12 +18,15 @@ namespace NzbDrone.Core.Download
     public class FailedDownloadService : IFailedDownloadService
     {
         private readonly IHistoryService _historyService;
+        private readonly ITrackedDownloadService _trackedDownloadService;
         private readonly IEventAggregator _eventAggregator;
 
         public FailedDownloadService(IHistoryService historyService,
+                                     ITrackedDownloadService trackedDownloadService,
                                      IEventAggregator eventAggregator)
         {
             _historyService = historyService;
+            _trackedDownloadService = trackedDownloadService;
             _eventAggregator = eventAggregator;
         }
 
@@ -49,7 +52,9 @@ namespace NzbDrone.Core.Download
 
             if (history.Any())
             {
-                PublishDownloadFailedEvent(history, "Manually marked as failed");
+                var trackedDownload = _trackedDownloadService.Find(downloadId);
+
+                PublishDownloadFailedEvent(history, "Manually marked as failed", trackedDownload);
             }
         }
 

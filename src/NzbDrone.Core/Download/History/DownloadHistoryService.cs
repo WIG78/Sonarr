@@ -97,6 +97,7 @@ namespace NzbDrone.Core.Download.History
 
             history.Data.Add("Indexer", message.Episode.Release.Indexer);
             history.Data.Add("DownloadClient", message.DownloadClient);
+            history.Data.Add("DownloadClientName", message.DownloadClientName);
             history.Data.Add("PreferredWordScore", message.Episode.PreferredWordScore.ToString());
 
             _repository.Insert(history);
@@ -135,7 +136,8 @@ namespace NzbDrone.Core.Download.History
                 DownloadClientId = message.DownloadClientInfo.Id
             };
 
-            history.Data.Add("DownloadClient", message.DownloadClientInfo.Name);
+            history.Data.Add("DownloadClient", message.DownloadClientInfo.Type);
+            history.Data.Add("DownloadClientName", message.DownloadClientInfo.Name);
 
             _repository.Insert(history);
         }
@@ -153,7 +155,8 @@ namespace NzbDrone.Core.Download.History
                 DownloadClientId = message.TrackedDownload.DownloadClient
             };
 
-            history.Data.Add("DownloadClient", message.TrackedDownload.DownloadItem.DownloadClientInfo.Name);
+            history.Data.Add("DownloadClient", message.TrackedDownload.DownloadItem.DownloadClientInfo.Type);
+            history.Data.Add("DownloadClientName", message.TrackedDownload.DownloadItem.DownloadClientInfo.Name);
 
             _repository.Insert(history);
         }
@@ -168,7 +171,7 @@ namespace NzbDrone.Core.Download.History
 
             var history = new DownloadHistory
             {
-                EventType = DownloadHistoryEventType.DownloadIgnored,
+                EventType = DownloadHistoryEventType.DownloadFailed,
                 SeriesId = message.SeriesId,
                 DownloadId = message.DownloadId,
                 SourceTitle = message.SourceTitle,
@@ -177,7 +180,8 @@ namespace NzbDrone.Core.Download.History
                 DownloadClientId = message.TrackedDownload.DownloadClient
             };
 
-            history.Data.Add("DownloadClient", message.TrackedDownload.DownloadItem.DownloadClientInfo.Name);
+            history.Data.Add("DownloadClient", message.TrackedDownload.DownloadItem.DownloadClientInfo.Type);
+            history.Data.Add("DownloadClientName", message.TrackedDownload.DownloadItem.DownloadClientInfo.Name);
 
             _repository.Insert(history);
         }
@@ -195,7 +199,8 @@ namespace NzbDrone.Core.Download.History
                 DownloadClientId = message.DownloadClientInfo.Id
             };
 
-            history.Data.Add("DownloadClient", message.DownloadClientInfo.Name);
+            history.Data.Add("DownloadClient", message.DownloadClientInfo.Type);
+            history.Data.Add("DownloadClientName", message.DownloadClientInfo.Name);
 
             _repository.Insert(history);
         }

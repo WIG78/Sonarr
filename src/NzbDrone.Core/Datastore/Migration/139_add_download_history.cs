@@ -18,7 +18,7 @@ namespace NzbDrone.Core.Datastore.Migration
                   .WithColumn("DownloadId").AsString().NotNullable()
                   .WithColumn("SourceTitle").AsString().NotNullable()
                   .WithColumn("Date").AsDateTime().NotNullable()
-                  .WithColumn("Protocol").AsInt32().NotNullable()
+                  .WithColumn("Protocol").AsInt32().Nullable()
                   .WithColumn("IndexerId").AsInt32().Nullable()
                   .WithColumn("DownloadClientId").AsInt32().Nullable()
                   .WithColumn("Release").AsString().Nullable()
@@ -35,6 +35,7 @@ namespace NzbDrone.Core.Datastore.Migration
         {
             {1, 1},
             {3, 2},
+            {4, 3},
             {7, 4}
         };
 
@@ -43,7 +44,7 @@ namespace NzbDrone.Core.Datastore.Migration
             using (var cmd = conn.CreateCommand())
             {
                 cmd.Transaction = tran;
-                cmd.CommandText = "SELECT SeriesId, DownloadId, EventType, SourceTitle, Date, Data FROM History WHERE DownloadId IS NOT NULL AND EventType IN (1, 3, 7) GROUP BY EventType, DownloadId";
+                cmd.CommandText = "SELECT SeriesId, DownloadId, EventType, SourceTitle, Date, Data FROM History WHERE DownloadId IS NOT NULL AND EventType IN (1, 3, 4, 7) GROUP BY EventType, DownloadId";
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -81,7 +82,7 @@ namespace NzbDrone.Core.Datastore.Migration
                             updateCmd.AddParameter(sourceTitle);
                             updateCmd.AddParameter(date);
                             updateCmd.AddParameter(protocol);
-                            updateCmd.AddParameter(downloadHistoryData);
+                            updateCmd.AddParameter(downloadHistoryData.ToJson());
 
                             updateCmd.ExecuteNonQuery();
                         }

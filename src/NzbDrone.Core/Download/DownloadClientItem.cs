@@ -18,22 +18,19 @@ namespace NzbDrone.Core.Download
         public long RemainingSize { get; set; }
         public TimeSpan? RemainingTime { get; set; }
         public double? SeedRatio { get; set; }
-
         public OsPath OutputPath { get; set; }
         public string Message { get; set; }
-
         public DownloadItemStatus Status { get; set; }
         public bool IsEncrypted { get; set; }
-
         public bool CanMoveFiles { get; set; }
         public bool CanBeRemoved { get; set; }
-
         public bool Removed { get; set; }
     }
 
     public class DownloadClientItemClientInfo
     {
         public DownloadProtocol Protocol { get; set; }
+        public string Type { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
 
@@ -43,6 +40,7 @@ namespace NzbDrone.Core.Download
             return new DownloadClientItemClientInfo
             {
                 Protocol = downloadClient.Protocol,
+                Type = downloadClient.Name,
                 Id = downloadClient.Definition.Id,
                 Name = downloadClient.Definition.Name
             };
